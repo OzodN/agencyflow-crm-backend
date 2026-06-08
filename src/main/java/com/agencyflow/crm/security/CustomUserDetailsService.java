@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return userRepository.findByEmail(email)
                 .map(CustomUserDetails::new)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("User with email %s not found".formatted(email))
+                        new UsernameNotFoundException("User with email %s not found".formatted(email))
                 );
     }
 }
