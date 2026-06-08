@@ -1,5 +1,6 @@
 package com.agencyflow.crm.user.service;
 
+import com.agencyflow.crm.common.exception.EntityNotFoundException;
 import com.agencyflow.crm.user.dto.UserResponse;
 import com.agencyflow.crm.user.mapper.UserMapper;
 import com.agencyflow.crm.user.model.User;
@@ -18,7 +19,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new EntityNotFoundException("User with id %d not found".formatted(id))
+                );
 
         return userMapper.toResponse(user);
     }
