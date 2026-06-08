@@ -1,0 +1,26 @@
+services:
+
+  postgres:
+    image: postgres:17
+
+    container_name: agencyflow-postgres
+
+    environment:
+      POSTGRES_DB: agencyflow
+      POSTGRES_USER: agencyflow
+      POSTGRES_PASSWORD: agencyflow
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agencyflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

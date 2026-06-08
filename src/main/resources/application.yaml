@@ -1,3 +1,25 @@
 spring:
   application:
     name: agencyflow-crm
+
+  security:
+    user:
+      name: user
+      password: 123
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/agencyflow
+    username: agencyflow
+    password: agencyflow
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8080
