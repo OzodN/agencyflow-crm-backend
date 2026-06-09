@@ -7,9 +7,9 @@ spring:
       name: ${BASIC_AUTH_USER:}
       password: ${BASIC_AUTH_PASSWORD:}
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DATABASE_URL}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
 
   jpa:
     hibernate:
