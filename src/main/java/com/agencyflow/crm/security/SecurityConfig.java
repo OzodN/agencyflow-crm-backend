@@ -68,7 +68,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
                 "https://agencyflow-crm-production.up.railway.app",
-                "https://serene-sfogliatella-fc07fd.netlify.app"
+                "https://wep-app-crm.netlify.app"
         ));
 
         configuration.setAllowedMethods(List.of("*"));
