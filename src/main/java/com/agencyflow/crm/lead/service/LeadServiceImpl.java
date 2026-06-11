@@ -6,6 +6,7 @@ import com.agencyflow.crm.common.util.CurrentUserResolver;
 import com.agencyflow.crm.lead.dto.CreateLeadRequest;
 import com.agencyflow.crm.lead.dto.LeadResponse;
 import com.agencyflow.crm.lead.dto.UpdateLeadRequest;
+import com.agencyflow.crm.lead.dto.UpdateLeadStatusRequest;
 import com.agencyflow.crm.lead.mapper.LeadMapper;
 import com.agencyflow.crm.lead.model.Lead;
 import com.agencyflow.crm.lead.model.LeadStatus;
@@ -112,12 +113,13 @@ public class LeadServiceImpl implements LeadService {
     }
 
     @Override
-    public LeadResponse changeStatus(Long id, LeadStatus status) {
+    public LeadResponse changeStatus(Long id, UpdateLeadStatusRequest request) {
         Lead lead = getActiveLead(id);
+        LeadStatus newStatus = request.status();
 
-        validateTransition(lead.getStatus(), status);
+        validateTransition(lead.getStatus(), newStatus);
 
-        lead.setStatus(status);
+        lead.setStatus(newStatus);
 
         lead.setUpdatedAt(now);
         lead.setUpdatedBy(currentUser);

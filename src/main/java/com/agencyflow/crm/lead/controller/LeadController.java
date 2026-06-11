@@ -3,7 +3,7 @@ package com.agencyflow.crm.lead.controller;
 import com.agencyflow.crm.lead.dto.CreateLeadRequest;
 import com.agencyflow.crm.lead.dto.LeadResponse;
 import com.agencyflow.crm.lead.dto.UpdateLeadRequest;
-import com.agencyflow.crm.lead.model.LeadStatus;
+import com.agencyflow.crm.lead.dto.UpdateLeadStatusRequest;
 import com.agencyflow.crm.lead.service.LeadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +44,9 @@ public class LeadController {
     @PatchMapping("/{id}/status")
     public LeadResponse changeStatus(
             @PathVariable Long id,
-            @RequestParam LeadStatus status
+            @RequestBody @Valid UpdateLeadStatusRequest request
     ) {
-        return leadService.changeStatus(id, status);
+        return leadService.changeStatus(id, request);
     }
 
     @PatchMapping("/{id}/assign/{salesManagerId}")
