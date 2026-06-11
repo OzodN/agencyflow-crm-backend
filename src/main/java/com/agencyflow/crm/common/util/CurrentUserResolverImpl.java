@@ -5,6 +5,7 @@ import com.agencyflow.crm.common.exception.EntityNotFoundException;
 import com.agencyflow.crm.user.model.User;
 import com.agencyflow.crm.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class CurrentUserResolverImpl implements CurrentUserResolver {
     private final UserRepository userRepository;
 
     @Override
-    public User getCurrentUser() {
+    public @NonNull User getCurrentUser() {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 

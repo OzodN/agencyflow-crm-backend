@@ -32,11 +32,11 @@ public class LeadServiceImpl implements LeadService {
     private final LeadMapper leadMapper;
     private final CurrentUserResolver currentUserResolver;
 
-    private final User currentUser = getCurrentUser();
+    private final User currentUser = currentUserResolver.getCurrentUser();
     private final LocalDateTime now = LocalDateTime.now();
 
     @Override
-    public LeadResponse create(CreateLeadRequest request) {
+    public LeadResponse create(@NonNull CreateLeadRequest request) {
 
         User assignedSalesManager = getSalesManager(request.assignedSalesManagerId());
 
@@ -75,7 +75,7 @@ public class LeadServiceImpl implements LeadService {
     }
 
     @Override
-    public LeadResponse update(Long id, UpdateLeadRequest request) {
+    public LeadResponse update(Long id, @NonNull UpdateLeadRequest request) {
         Lead lead = getActiveLead(id);
 
         if (request.companyName() != null) {
@@ -113,7 +113,7 @@ public class LeadServiceImpl implements LeadService {
     }
 
     @Override
-    public LeadResponse changeStatus(Long id, UpdateLeadStatusRequest request) {
+    public LeadResponse changeStatus(Long id, @NonNull UpdateLeadStatusRequest request) {
         Lead lead = getActiveLead(id);
         LeadStatus newStatus = request.status();
 
@@ -177,18 +177,12 @@ public class LeadServiceImpl implements LeadService {
         return assignedSalesManager;
     }
 
-    private Lead getActiveLead(Long id) {
-        Lead lead = leadRepository.findById(id)
+    private @NonNull Lead getActiveLead(Long id) {
+        return leadRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Lead not found with id: " + id));
-
-        if (lead.isDeleted()) {
-            throw new EntityNotFoundException("Lead not found with id: " + id);
-        }
-
-        return lead;
     }
 
-    private void validateTransition(LeadStatus currentStatus, LeadStatus nextStatus) {
+    private void validateTransition(@NonNull LeadStatus currentStatus, LeadStatus nextStatus) {
         boolean valid = switch (currentStatus) {
             case NEW -> nextStatus == LeadStatus.CONTACTED || nextStatus == LeadStatus.REJECTED;
             case CONTACTED -> nextStatus == LeadStatus.QUALIFIED || nextStatus == LeadStatus.REJECTED;
@@ -201,9 +195,5 @@ public class LeadServiceImpl implements LeadService {
                     "Invalid lead status transition from " + currentStatus + " to " + nextStatus
             );
         }
-    }
-
-    private User getCurrentUser() {
-        return currentUserResolver.getCurrentUser();
     }
 }

@@ -4,7 +4,6 @@ import com.agencyflow.crm.lead.dto.CreateLeadRequest;
 import com.agencyflow.crm.lead.dto.LeadResponse;
 import com.agencyflow.crm.lead.dto.UpdateLeadRequest;
 import com.agencyflow.crm.lead.dto.UpdateLeadStatusRequest;
-import com.agencyflow.crm.lead.model.LeadStatus;
 
 import java.util.List;
 
