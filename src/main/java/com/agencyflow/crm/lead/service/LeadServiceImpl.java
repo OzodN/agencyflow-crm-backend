@@ -117,7 +117,7 @@ public class LeadServiceImpl implements LeadService {
         Lead lead = getActiveLead(leadId);
 
         if (lead.getStatus() != LeadStatus.QUALIFIED) {
-            throw new BusinessException("Lead must be qualified before conversion");
+            throw new BusinessException("Lead must be QUALIFIED before conversion");
         }
 
         Customer customer = customerService.createFromLead(lead);
@@ -138,13 +138,13 @@ public class LeadServiceImpl implements LeadService {
         User assignedSalesManager = userRepository.findById(assignedSalesManagerId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
-                                "Sales manager with id %d not found".formatted(assignedSalesManagerId)
+                                "Sales manager not found with id: %d".formatted(assignedSalesManagerId)
                         )
                 );
 
         if (assignedSalesManager.getRole() != Role.SALES_MANAGER) {
             throw new BusinessException(
-                    "User with id %d is not sales manager".formatted(assignedSalesManagerId)
+                    "User is not sales manager: %d ".formatted(assignedSalesManagerId)
             );
         }
 
@@ -153,7 +153,7 @@ public class LeadServiceImpl implements LeadService {
 
     private @NonNull Lead getActiveLead(Long id) {
         return leadRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new EntityNotFoundException("Lead not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Lead not found with id: %d".formatted(id)));
     }
 
     private void validateTransition(@NonNull LeadStatus currentStatus, LeadStatus nextStatus) {

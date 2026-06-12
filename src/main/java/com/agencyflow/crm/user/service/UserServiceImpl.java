@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("User with id %d not found".formatted(id))
+                        new EntityNotFoundException("User not found with id: %d".formatted(id))
                 );
 
         return userMapper.toResponse(user);
