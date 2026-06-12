@@ -1,6 +1,5 @@
-package com.agencyflow.crm.security;
+package com.agencyflow.crm.security.userdetails;
 
-import com.agencyflow.crm.common.exception.EntityNotFoundException;
 import com.agencyflow.crm.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
@@ -19,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return userRepository.findByEmail(email)
                 .map(CustomUserDetails::new)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User with email %s not found".formatted(email))
+                        new UsernameNotFoundException("User not found with email: %s".formatted(email))
                 );
     }
 }

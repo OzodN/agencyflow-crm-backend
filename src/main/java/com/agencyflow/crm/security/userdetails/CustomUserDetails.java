@@ -1,4 +1,4 @@
-package com.agencyflow.crm.security;
+package com.agencyflow.crm.security.userdetails;
 
 import com.agencyflow.crm.user.model.User;
 import lombok.Getter;
