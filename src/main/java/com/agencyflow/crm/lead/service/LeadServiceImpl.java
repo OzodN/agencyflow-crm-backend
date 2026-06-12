@@ -30,10 +30,7 @@ public class LeadServiceImpl implements LeadService {
     private final LeadRepository leadRepository;
     private final UserRepository userRepository;
     private final LeadMapper leadMapper;
-    private final CurrentUserResolver currentUserResolver;
-
-    private final User currentUser = currentUserResolver.getCurrentUser();
-    private final LocalDateTime now = LocalDateTime.now();
+    private final CustomerService customerService;
 
     @Override
     public LeadResponse create(@NonNull CreateLeadRequest request) {
@@ -48,10 +45,6 @@ public class LeadServiceImpl implements LeadService {
                 .status(LeadStatus.NEW)
                 .assignedSalesManager(assignedSalesManager)
                 .deleted(false)
-                .createdBy(currentUser)
-                .updatedBy(currentUser)
-                .createdAt(now)
-                .updatedAt(now)
                 .build();
 
         Lead savedLead = leadRepository.save(lead);
@@ -91,8 +84,6 @@ public class LeadServiceImpl implements LeadService {
             lead.setPhone(request.phone());
         }
 
-        lead.setUpdatedBy(currentUser);
-        lead.setUpdatedAt(now);
 
         Lead savedLead = leadRepository.save(lead);
 
@@ -104,10 +95,7 @@ public class LeadServiceImpl implements LeadService {
         Lead lead = getActiveLead(id);
 
         lead.setDeleted(true);
-        lead.setDeletedAt(now);
-
-        lead.setUpdatedBy(currentUser);
-        lead.setUpdatedAt(now);
+        lead.setDeletedAt(LocalDateTime.now());
 
         leadRepository.save(lead);
     }
@@ -121,8 +109,6 @@ public class LeadServiceImpl implements LeadService {
 
         lead.setStatus(newStatus);
 
-        lead.setUpdatedAt(now);
-        lead.setUpdatedBy(currentUser);
 
         Lead savedLead = leadRepository.save(lead);
 
@@ -136,8 +122,6 @@ public class LeadServiceImpl implements LeadService {
 
         lead.setAssignedSalesManager(salesManager);
 
-        lead.setUpdatedAt(now);
-        lead.setUpdatedBy(currentUser);
 
         Lead savedLead = leadRepository.save(lead);
 
