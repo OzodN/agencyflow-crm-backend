@@ -1,9 +1,12 @@
 package com.agencyflow.crm.lead.model;
 
 import com.agencyflow.crm.common.model.AuditableEntity;
+import com.agencyflow.crm.customer.model.Customer;
 import com.agencyflow.crm.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -31,6 +34,7 @@ public class Lead extends AuditableEntity {
     private String phone;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false)
     private LeadStatus status;
 

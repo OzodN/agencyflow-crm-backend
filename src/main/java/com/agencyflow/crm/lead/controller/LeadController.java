@@ -61,4 +61,9 @@ public class LeadController {
     public void delete(@PathVariable Long id) {
         leadService.delete(id);
     }
+
+    @PostMapping("/{id}/convert")
+    public LeadResponse convert(@PathVariable Long id) {
+        return leadService.convert(id);
+    }
 }

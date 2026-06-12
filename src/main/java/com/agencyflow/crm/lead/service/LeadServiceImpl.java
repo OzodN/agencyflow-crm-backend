@@ -2,7 +2,8 @@ package com.agencyflow.crm.lead.service;
 
 import com.agencyflow.crm.common.exception.BusinessException;
 import com.agencyflow.crm.common.exception.EntityNotFoundException;
-import com.agencyflow.crm.common.util.CurrentUserResolver;
+import com.agencyflow.crm.customer.model.Customer;
+import com.agencyflow.crm.customer.service.CustomerService;
 import com.agencyflow.crm.lead.dto.CreateLeadRequest;
 import com.agencyflow.crm.lead.dto.LeadResponse;
 import com.agencyflow.crm.lead.dto.UpdateLeadRequest;
@@ -71,23 +72,12 @@ public class LeadServiceImpl implements LeadService {
     public LeadResponse update(Long id, @NonNull UpdateLeadRequest request) {
         Lead lead = getActiveLead(id);
 
-        if (request.companyName() != null) {
-            lead.setCompanyName(request.companyName());
-        }
-        if (request.contactName() != null) {
-            lead.setContactName(request.contactName());
-        }
-        if (request.email() != null) {
-            lead.setEmail(request.email());
-        }
-        if (request.phone() != null) {
-            lead.setPhone(request.phone());
-        }
+        if (request.companyName() != null) lead.setCompanyName(request.companyName());
+        if (request.contactName() != null) lead.setContactName(request.contactName());
+        if (request.email() != null) lead.setEmail(request.email());
+        if (request.phone() != null) lead.setPhone(request.phone());
 
-
-        Lead savedLead = leadRepository.save(lead);
-
-        return leadMapper.toResponse(savedLead);
+        return leadMapper.toResponse(leadRepository.save(lead));
     }
 
     @Override
@@ -109,10 +99,7 @@ public class LeadServiceImpl implements LeadService {
 
         lead.setStatus(newStatus);
 
-
-        Lead savedLead = leadRepository.save(lead);
-
-        return leadMapper.toResponse(savedLead);
+        return leadMapper.toResponse(leadRepository.save(lead));
     }
 
     @Override
@@ -122,10 +109,8 @@ public class LeadServiceImpl implements LeadService {
 
         lead.setAssignedSalesManager(salesManager);
 
-
-        Lead savedLead = leadRepository.save(lead);
-
-        return leadMapper.toResponse(savedLead);    }
+        return leadMapper.toResponse(leadRepository.save(lead));
+    }
 
     @Override
     public LeadResponse convert(Long leadId) {
@@ -135,9 +120,14 @@ public class LeadServiceImpl implements LeadService {
             throw new BusinessException("Lead must be qualified before conversion");
         }
 
-        throw new UnsupportedOperationException(
-                "Conversion implementation will be added in Customer module"
-        );
+        Customer customer = customerService.createFromLead(lead);
+
+        lead.setStatus(LeadStatus.CONVERTED);
+
+        lead.setConvertedCustomer(customer);
+        lead.setConvertedAt(LocalDateTime.now());
+
+        return leadMapper.toResponse(leadRepository.save(lead));
     }
 
     private @NonNull User getSalesManager(Long assignedSalesManagerId) {
