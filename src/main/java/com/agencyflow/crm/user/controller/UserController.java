@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,41 +22,47 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@Tag(name = "Users", description = "Endpoints for reading and managing users")
+@Tag(name = "Users", description = "Authenticated endpoints for reading CRM user accounts.")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     @Operation(
-            summary = "Get user details",
-            description = "Returns a single user by ID. Requires authenticated access via JWT bearer token."
+            summary = "Get user by ID",
+            description = "Returns a single CRM user account by its server-generated identifier. Requires a valid JWT bearer token; no role-specific restriction is enforced by the current implementation.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "User found and returned",
+                    description = "User was found and returned.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
-                    description = "Authentication required or invalid JWT token",
+                    description = "Authentication is required, the bearer token is missing, or the bearer token is invalid.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "User identifier path variable is not a valid number.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "User not found",
+                    description = "No user exists for the supplied identifier.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "Unexpected server error",
+                    description = "Unexpected server error while retrieving the user.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             )
     })
     @GetMapping("/{id}")
     public UserResponse getById(
-            @Parameter(description = "Unique identifier of the user", required = true, schema = @Schema(type = "integer", format = "int64", example = "1"))
+            @Parameter(description = "Server-generated identifier of the user to retrieve.", required = true, schema = @Schema(type = "integer", format = "int64", example = "2"))
             @PathVariable Long id
     ) {
         return userService.getById(id);
@@ -63,12 +70,13 @@ public class UserController {
 
     @Operation(
             summary = "List users",
-            description = "Returns a list of all users. Requires authenticated access via JWT bearer token."
+            description = "Returns all CRM user accounts. The current implementation does not paginate or filter this list. Requires a valid JWT bearer token; no role-specific restriction is enforced.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "List of users returned successfully",
+                    description = "Users were returned successfully.",
                     content = @Content(
                             mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = UserResponse.class))
@@ -76,12 +84,12 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "401",
-                    description = "Authentication required or invalid JWT token",
+                    description = "Authentication is required, the bearer token is missing, or the bearer token is invalid.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "Unexpected server error",
+                    description = "Unexpected server error while listing users.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             )
     })

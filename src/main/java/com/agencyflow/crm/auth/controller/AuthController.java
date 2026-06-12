@@ -19,17 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@Tag(name = "Authentication", description = "Endpoints for authentication and token issuance")
+@Tag(name = "Authentication", description = "Public endpoints for signing in and receiving JWT access tokens.")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
     @Operation(
-            summary = "User login",
-            description = "Authenticates a user using email and password, then returns a JWT access token.",
+            summary = "Sign in user",
+            description = "Authenticates a user with email and password credentials. This endpoint is public and returns a JWT access token when the credentials are accepted.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Login credentials payload",
+                    description = "User credentials used to request a JWT access token.",
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
@@ -40,7 +40,7 @@ public class AuthController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Authentication successful",
+                    description = "Credentials were accepted and a JWT access token was issued.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = LoginResponse.class)
@@ -48,17 +48,17 @@ public class AuthController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Invalid login request payload or validation failure",
+                    description = "Request body is missing, malformed, or violates credential validation rules.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "401",
-                    description = "Invalid credentials provided",
+                    description = "Credentials were syntactically valid but authentication failed.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "Unexpected server error during authentication",
+                    description = "Unexpected server error while processing authentication.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             )
     })
